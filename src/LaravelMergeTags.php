@@ -118,7 +118,7 @@ class LaravelMergeTags
             $keyValues = array_merge($keyValues, $model->getMappedKeyValues());
         }
 
-        $this->keyValues = collect($keyValues)->map(function ($item){
+        $this->keyValues = collect($keyValues)->unique('key')->map(function ($item){
             $item['key'] = $this->tags[0].$item['key'].$this->tags[1];
             return $item;
         })->toArray();
