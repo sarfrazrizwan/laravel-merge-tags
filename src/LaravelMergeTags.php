@@ -5,6 +5,7 @@ namespace Sarfrazrizwan\LaravelMergeTags;
 use Sarfrazrizwan\LaravelMergeTags\HasMergeTag;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class LaravelMergeTags
 {
@@ -150,9 +151,21 @@ class LaravelMergeTags
 
         foreach (iterator_to_array($doc->getElementsByTagName('span')) as $node){
             $key = $node->getAttribute('data-placeholder');
-            if ($key){
-                $node->textContent = $this->getValue($key);
+            $value = $this->getValue($key);
+
+            if (Str::contains($value, ['http://', 'https://'])){
+                $tag = $doc->createElement('a');
+                $tag->setAttribute('href', $this->getValue($key));
+                $tag->setAttribute('target', '_blank');
+                $tag->textContent = $value;
+                $node->parentNode->replaceChild($tag, $node);
             }
+            else {
+                $tag = $doc->createElement('span');
+                $tag->textContent = $this->getValue($key);
+            }
+
+            $node->parentNode->replaceChild($tag, $node);
         }
 
         return str_replace('<?xml encoding="UTF-8">', '', $doc->saveHTML());
