@@ -35,7 +35,9 @@ trait HasMergeTag
 
     public function getMappedKeyValues()
     {
-        $prefix = $this->getParseabelTextPrefix();
+        $prefix = config('merge-tags.prefix') ? $this->getParseabelTextPrefix() : null;
+        if ($prefix)
+            $prefix = "{$prefix}{$this->parseabelTextPrefixSeparator}";
 
         return collect($this->parseableKeyVales())
             ->map(function ($item) use($prefix){
@@ -43,7 +45,7 @@ trait HasMergeTag
                 if (!isset($item['value']))
                     $item['value'] = $this->{$item['key']};
 
-                $item['key'] = "{$prefix}{$this->parseabelTextPrefixSeparator}{$item['key']}";
+                $item['key'] = "{$prefix}{$item['key']}";
 
                 if (!isset($item['label']))
                     $item['label'] = ucfirst(str()->replace($this->parseabelTextPrefixSeparator, ' ', $item['key']));
