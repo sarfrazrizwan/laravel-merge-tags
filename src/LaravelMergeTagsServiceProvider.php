@@ -24,7 +24,7 @@ class LaravelMergeTagsServiceProvider extends ServiceProvider
     public function register()
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'merge-tags');
+        $this->mergeConfigFrom(__DIR__.'/../config/merge-tags.php', 'merge-tags');
 
         // Register the main class to use with the facade
 
