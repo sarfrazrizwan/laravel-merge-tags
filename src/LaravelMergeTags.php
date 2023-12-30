@@ -150,7 +150,11 @@ class LaravelMergeTags
         $doc->loadHTML('<?xml encoding="UTF-8">' . $text, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOXMLDECL);
 
         foreach (iterator_to_array($doc->getElementsByTagName('span')) as $node){
-            $key = $node->getAttribute('data-placeholder');
+            $key = $node->getAttribute(config('merge-tags.attribute_name'));
+            
+            if(!$key)
+                continue;
+
             $value = $this->getValue($key);
 
             if (Str::contains($value, ['http://', 'https://'])){
@@ -165,7 +169,8 @@ class LaravelMergeTags
                 $tag->textContent = $this->getValue($key);
             }
 
-            $node->parentNode->replaceChild($tag, $node);
+            if($node->parentNode)
+                $node->parentNode->replaceChild($tag, $node);
         }
 
         return str_replace('<?xml encoding="UTF-8">', '', $doc->saveHTML());
